@@ -1,0 +1,42 @@
+#!/bin/bash
+#Author: mirage335
+#Date: 10-15-2013     (MM-DD-YYYY)
+#Version: 1.0          (Minor versions reflect compatible updates.)
+#Dependencies: sed
+#Usage ./refdes_renumAll schematic1 pcb1 schematic2 pcb2
+#Purpose: Facillitates merging complete gEDA projects, making little systems into big systems.
+
+#Zero pads and prepends a number to all reference designators. The expected workflow is:
+#1) Create project A with schematic and PCB.
+#2) Create project B with schematic and PCB.
+#3) Place project B schematic, PCB, and related files in same directory with A.
+#4) Run this script on all four schematic/PCB files.
+#5) Copy/paste schematic B into schematic A. Add nets to link functionality as needed.
+#6) Open PCB A. Load PCB B to buffer, paste somewhere.
+#7) Import schematics, resolve rats.
+
+# Copyright (c) 2012 mirage335
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+schematic1="$1"
+pcb1="$2"
+schematic2="$3"
+pcb2="$4"
+
+sed -i 's/\(refdes\=\)\([A-z]\+\)\([1-9]\)$/\1\20\3/g' $schematic1
+sed -i 's/\(refdes\=\)\([A-z]\+\)\([0-9]*\)/\1\21\3/g' $schematic1
+
+sed -i 's/\(Element\[[^"]*\"[^"]*\"[^"]*\"[^"]*\"[^"]*\"\)\([A-z]\+\)\([1-9]\)\"/\1\20\3\"/g' $pcb1
+sed -i 's/\(Element\[[^"]*\"[^"]*\"[^"]*\"[^"]*\"[^"]*\"\)\([A-z]\+\)\([0-9]*\)/\1\21\3/g' $pcb1
+
+
+sed -i 's/\(refdes\=\)\([A-z]\+\)\([1-9]\)$/\1\20\3/g' $schematic2
+sed -i 's/\(refdes\=\)\([A-z]\+\)\([0-9]*\)/\1\22\3/g' $schematic2
+
+sed -i 's/\(Element\[[^"]*\"[^"]*\"[^"]*\"[^"]*\"[^"]*\"\)\([A-z]\+\)\([1-9]\)\"/\1\20\3\"/g' $pcb2
+sed -i 's/\(Element\[[^"]*\"[^"]*\"[^"]*\"[^"]*\"[^"]*\"\)\([A-z]\+\)\([0-9]*\)/\1\22\3/g' $pcb2
